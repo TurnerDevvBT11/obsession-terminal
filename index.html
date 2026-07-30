@@ -2,21 +2,42 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <script>
+        function updateTitle(state) {
+            if (state === 'login') document.title = 'SYSTEM_LOCKED';
+            if (state === 'main') document.title = 'SYSTEM_READY';
+            if (state === 'socials') document.title = 'ACCESS_COMPLETE';
+        }
+    </script>
     <style>
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: center; padding-top: 50px; overflow: hidden; }
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: center; padding-top: 50px; overflow: hidden; transition: background 0.2s; }
         .hidden { display: none !important; }
         input { display: block; margin: 10px auto; padding: 10px; background: #000; border: 1px solid #0f0; color: #0f0; text-align: center; }
         button { background: #000; color: #0f0; padding: 15px 30px; font-size: 18px; border: 2px solid #0f0; cursor: pointer; font-weight: bold; }
         button:hover { background: #0f0; color: #000; }
         a { color: #0f0; display: block; margin: 20px; font-size: 24px; text-decoration: none; }
+        
+        /* SHAKE ANIMATION */
+        @keyframes shake {
+            0% { transform: translate(2px, 2px); }
+            25% { transform: translate(-2px, -2px); }
+            50% { transform: translate(2px, -2px); }
+            75% { transform: translate(-2px, 2px); }
+            100% { transform: translate(0, 0); }
+        }
+        .glitch-active {
+            animation: shake 0.2s;
+            animation-iteration-count: 8; /* Shakes for about 1.6 seconds */
+            background: #002200; /* Subtle green flash */
+        }
     </style>
 </head>
-<body>
+<body onload="updateTitle('login')">
 
     <div id="login-screen">
         <h1>SYSTEM_ACCESS_REQUIRED</h1>
         <input type="text" id="user" placeholder="USERNAME">
-        <input type="password" id="pass" placeholder="PASSWORD">
+        <input type="password" id="pass" placeholder="PASSWORD" onkeypress="if(event.key === 'Enter') checkLogin()">
         <button onclick="checkLogin()">LOGIN</button>
         <p id="error-msg" style="color: red;"></p>
     </div>
@@ -52,6 +73,7 @@
             if (u === "devv" && p === "obsession") {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('main-screen').classList.remove('hidden');
+                updateTitle('main');
             } else {
                 document.getElementById('error-msg').innerText = "ACCESS_DENIED";
             }
@@ -59,8 +81,15 @@
 
         function startDrain() {
             drainSound.play();
-            document.getElementById('main-screen').classList.add('hidden');
-            document.getElementById('socials-screen').classList.remove('hidden');
+            // Trigger the cool shake effect
+            document.body.classList.add('glitch-active');
+            
+            setTimeout(function() {
+                document.body.classList.remove('glitch-active');
+                document.getElementById('main-screen').classList.add('hidden');
+                document.getElementById('socials-screen').classList.remove('hidden');
+                updateTitle('socials');
+            }, 1600); 
         }
     </script>
 </body>
