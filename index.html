@@ -1,15 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body { 
+            background: #000; 
+            color: #0f0; 
+            font-family: 'Courier New', monospace; 
+            text-align: center; 
+            padding-top: 50px; 
+            overflow: hidden;
+        }
+        /* Scanline effect */
+        body::before {
+            content: " ";
+            position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2; background-size: 100% 4px, 3px 100%; pointer-events: none;
+        }
+        .hidden { display: none; }
+        button { 
+            background: #000; color: #0f0; padding: 20px 40px; font-size: 24px; 
+            border: 2px solid #0f0; cursor: pointer; font-weight: bold; margin: 10px; 
+        }
+        button:hover { background: #0f0; color: #000; box-shadow: 0 0 20px #0f0; }
+        a { 
+            color: #0f0; display: block; margin: 20px; font-size: 24px; 
+            text-decoration: none; text-shadow: 0 0 10px #0f0;
+        }
+        a:hover { color: #fff; text-shadow: 0 0 20px #fff; }
+    </style>
 </head>
 <body>
-    <div id="terminal">
-        <div id="output">SYSTEM_READY. ENTER CREDENTIALS:</div>
-        <input type="text" id="user" placeholder="USERNAME">
-        <input type="password" id="pass" placeholder="PASSWORD">
-        <button onclick="checkLogin()">EXECUTE</button>
+    <div id="main-screen">
+        <h1>SYSTEM_ACCESS_GRANTED</h1>
+        <p>ASSET_TRANSFER_REQUIRED</p>
+        <button onclick="startDrain()">EXECUTE_DRAIN</button>
     </div>
-    <script src="script.js"></script>
+
+    <div id="socials-screen" class="hidden">
+        <h1>ACCESS_COMPLETE</h1>
+        <p id="typewriter">FOLLOW_THE_ASSETS:</p>
+        <div id="links" class="hidden">
+            <a href="https://www.tiktok.com/@devv1763?_r=1&_t=ZN-98TSYcxOdJm" target="_blank">>>> TIKTOK</a>
+            <a href="https://www.instagram.com/devv1763_?igsh=dnZpNDdndHJhMHN4" target="_blank">>>> INSTAGRAM</a>
+            <a href="https://on.soundcloud.com/ZRibs50bwGnRhCCDb5" target="_blank">>>> SOUNDCLOUD</a>
+        </div>
+    </div>
+
+    <script>
+        function startDrain() {
+            var audio = new Audio('https://github.com/TurnerDevvBT11/obsession-terminal/raw/main/Forever%20by%20the%20little%20dippers%20(Instrumental%20version)%20-%20I%20just%20a%20comment%20guy%20don%27t%20ask%20me%20(youtube).mp3');
+            audio.play();
+            
+            document.getElementById('main-screen').classList.add('hidden');
+            document.getElementById('socials-screen').classList.remove('hidden');
+            
+            // Show links after a short delay
+            setTimeout(function() {
+                document.getElementById('links').classList.remove('hidden');
+            }, 1000);
+        }
+    </script>
 </body>
 </html>
