@@ -2,11 +2,32 @@
 <html>
 <head>
     <style>
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: center; padding-top: 50px; }
+        body { 
+            background: #000; 
+            color: #0f0; 
+            font-family: 'Courier New', monospace; 
+            text-align: center; 
+            padding-top: 50px; 
+            overflow: hidden;
+        }
+        /* Scanline effect */
+        body::before {
+            content: " ";
+            position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2; background-size: 100% 4px, 3px 100%; pointer-events: none;
+        }
         .hidden { display: none; }
-        button { background: #0f0; color: #000; padding: 20px 40px; font-size: 24px; border: none; cursor: pointer; font-weight: bold; margin: 10px; }
-        button:hover { background: #fff; }
-        a { color: #fff; display: block; margin: 20px; font-size: 20px; text-decoration: none; }
+        button { 
+            background: #000; color: #0f0; padding: 20px 40px; font-size: 24px; 
+            border: 2px solid #0f0; cursor: pointer; font-weight: bold; margin: 10px; 
+        }
+        button:hover { background: #0f0; color: #000; box-shadow: 0 0 20px #0f0; }
+        a { 
+            color: #0f0; display: block; margin: 20px; font-size: 24px; 
+            text-decoration: none; text-shadow: 0 0 10px #0f0;
+        }
+        a:hover { color: #fff; text-shadow: 0 0 20px #fff; }
     </style>
 </head>
 <body>
@@ -18,10 +39,12 @@
 
     <div id="socials-screen" class="hidden">
         <h1>ACCESS_COMPLETE</h1>
-        <p>FOLLOW_THE_ASSETS:</p>
-        <a href="https://www.tiktok.com/@devv1763?_r=1&_t=ZN-98TSYcxOdJm" target="_blank">>>> TIKTOK</a>
-        <a href="https://www.instagram.com/devv1763_?igsh=dnZpNDdndHJhMHN4" target="_blank">>>> INSTAGRAM</a>
-        <a href="https://on.soundcloud.com/ZRibs50bwGnRhCCDb5" target="_blank">>>> SOUNDCLOUD</a>
+        <p id="typewriter">FOLLOW_THE_ASSETS:</p>
+        <div id="links" class="hidden">
+            <a href="https://www.tiktok.com/@devv1763?_r=1&_t=ZN-98TSYcxOdJm" target="_blank">>>> TIKTOK</a>
+            <a href="https://www.instagram.com/devv1763_?igsh=dnZpNDdndHJhMHN4" target="_blank">>>> INSTAGRAM</a>
+            <a href="https://on.soundcloud.com/ZRibs50bwGnRhCCDb5" target="_blank">>>> SOUNDCLOUD</a>
+        </div>
     </div>
 
     <script>
@@ -31,6 +54,10 @@
             
             document.getElementById('main-screen').classList.add('hidden');
             document.getElementById('socials-screen').classList.remove('hidden');
+            
+            setTimeout(function() {
+                document.getElementById('links').classList.remove('hidden');
+            }, 1000);
         }
     </script>
 </body>
