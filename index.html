@@ -2,13 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <script>
-        function updateTitle(state) {
-            if (state === 'login') document.title = 'SYSTEM_LOCKED';
-            if (state === 'main') document.title = 'SYSTEM_READY';
-            if (state === 'socials') document.title = 'ACCESS_COMPLETE';
-        }
-    </script>
+    <title>SYSTEM_LOCKED</title>
     <style>
         body { background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: center; padding-top: 50px; overflow: hidden; transition: background 0.2s; }
         .hidden { display: none !important; }
@@ -17,7 +11,6 @@
         button:hover { background: #0f0; color: #000; }
         a { color: #0f0; display: block; margin: 20px; font-size: 24px; text-decoration: none; }
         
-        /* SHAKE ANIMATION */
         @keyframes shake {
             0% { transform: translate(2px, 2px); }
             25% { transform: translate(-2px, -2px); }
@@ -27,16 +20,17 @@
         }
         .glitch-active {
             animation: shake 0.2s;
-            animation-iteration-count: 8; /* Shakes for about 1.6 seconds */
-            background: #002200; /* Subtle green flash */
+            animation-iteration-count: 8;
+            background: #002200;
         }
     </style>
 </head>
-<body onload="updateTitle('login')">
+<body>
 
     <div id="login-screen">
         <h1>SYSTEM_ACCESS_REQUIRED</h1>
-        <input type="text" id="user" placeholder="USERNAME">
+        <!-- Added onkeypress to both inputs for maximum compatibility -->
+        <input type="text" id="user" placeholder="USERNAME" onkeypress="if(event.key === 'Enter') document.getElementById('pass').focus()">
         <input type="password" id="pass" placeholder="PASSWORD" onkeypress="if(event.key === 'Enter') checkLogin()">
         <button onclick="checkLogin()">LOGIN</button>
         <p id="error-msg" style="color: red;"></p>
@@ -59,21 +53,13 @@
     <script>
         var drainSound = new Audio('https://github.com/TurnerDevvBT11/obsession-terminal/raw/main/Forever%20by%20the%20little%20dippers%20(Instrumental%20version)%20-%20I%20just%20a%20comment%20guy%20don%27t%20ask%20me%20(youtube).mp3');
 
-        const allLinks = document.querySelectorAll('a');
-        allLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                drainSound.pause();
-                drainSound.currentTime = 0;
-            });
-        });
-
         function checkLogin() {
             var u = document.getElementById('user').value.toLowerCase();
             var p = document.getElementById('pass').value.toLowerCase();
             if (u === "devv" && p === "obsession") {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('main-screen').classList.remove('hidden');
-                updateTitle('main');
+                document.title = 'SYSTEM_READY';
             } else {
                 document.getElementById('error-msg').innerText = "ACCESS_DENIED";
             }
@@ -81,15 +67,13 @@
 
         function startDrain() {
             drainSound.play();
-            // Trigger the cool shake effect
             document.body.classList.add('glitch-active');
-            
             setTimeout(function() {
                 document.body.classList.remove('glitch-active');
                 document.getElementById('main-screen').classList.add('hidden');
                 document.getElementById('socials-screen').classList.remove('hidden');
-                updateTitle('socials');
-            }, 1600); 
+                document.title = 'ACCESS_COMPLETE';
+            }, 1600);
         }
     </script>
 </body>
