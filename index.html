@@ -35,6 +35,18 @@
     </div>
 
     <script>
+        // 1. Preload audio as soon as the page loads so it plays instantly when clicked
+        var drainSound = new Audio('https://github.com/TurnerDevvBT11/obsession-terminal/raw/main/Forever%20by%20the%20little%20dippers%20(Instrumental%20version)%20-%20I%20just%20a%20comment%20guy%20don%27t%20ask%20me%20(youtube).mp3');
+
+        // 2. Stop audio when any link is clicked
+        const allLinks = document.querySelectorAll('a');
+        allLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                drainSound.pause();
+                drainSound.currentTime = 0;
+            });
+        });
+
         function checkLogin() {
             var u = document.getElementById('user').value.toLowerCase();
             var p = document.getElementById('pass').value.toLowerCase();
@@ -47,8 +59,7 @@
         }
 
         function startDrain() {
-            var audio = new Audio('https://github.com/TurnerDevvBT11/obsession-terminal/raw/main/Forever%20by%20the%20little%20dippers%20(Instrumental%20version)%20-%20I%20just%20a%20comment%20guy%20don%27t%20ask%20me%20(youtube).mp3');
-            audio.play();
+            drainSound.play(); // This will now play instantly because it's already loaded
             document.getElementById('main-screen').classList.add('hidden');
             document.getElementById('socials-screen').classList.remove('hidden');
         }
