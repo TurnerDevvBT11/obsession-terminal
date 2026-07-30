@@ -29,7 +29,6 @@
 
     <div id="login-screen">
         <h1>SYSTEM_ACCESS_REQUIRED</h1>
-        <!-- Added onkeypress to both inputs for maximum compatibility -->
         <input type="text" id="user" placeholder="USERNAME" onkeypress="if(event.key === 'Enter') document.getElementById('pass').focus()">
         <input type="password" id="pass" placeholder="PASSWORD" onkeypress="if(event.key === 'Enter') checkLogin()">
         <button onclick="checkLogin()">LOGIN</button>
@@ -52,6 +51,15 @@
 
     <script>
         var drainSound = new Audio('https://github.com/TurnerDevvBT11/obsession-terminal/raw/main/Forever%20by%20the%20little%20dippers%20(Instrumental%20version)%20-%20I%20just%20a%20comment%20guy%20don%27t%20ask%20me%20(youtube).mp3');
+
+        // KILL SWITCH: Stops audio when any link is clicked
+        const allLinks = document.querySelectorAll('a');
+        allLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                drainSound.pause();
+                drainSound.currentTime = 0;
+            });
+        });
 
         function checkLogin() {
             var u = document.getElementById('user').value.toLowerCase();
