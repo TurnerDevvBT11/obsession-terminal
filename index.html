@@ -3,18 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>SYSTEM_LOCKED</title>
+    <!-- Importing the Graffiti font -->
+    <link href="https://fonts.googleapis.com/css2?family=Grape+Nuts&display=swap" rel="stylesheet">
     <style>
         body { margin: 0; padding: 0; background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: center; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: background 0.5s, color 0.5s; overflow: hidden; cursor: crosshair; }
         #matrix-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
         #content-wrapper { position: relative; z-index: 2; width: 100%; transition: 0.3s; }
         body:hover { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="5" fill="red"/></svg>'), auto; }
         @keyframes strobe { 0% { border-color: #f00; } 50% { border-color: transparent; } 100% { border-color: #f00; } }
+        
+        /* Red Alert States */
         body.red-alert { background: #220000 !important; color: #ff0000 !important; border: 10px solid #f00; animation: strobe 0.5s infinite; box-sizing: border-box; }
         body.red-alert input, body.red-alert button { border-color: #ff0000 !important; color: #ff0000 !important; }
         body.red-alert a { color: #ff0000 !important; }
+        
         #crt-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 10; }
         .hidden { display: none !important; }
         input { display: block; margin: 10px auto; padding: 10px; background: #000; border: 1px solid #0f0; color: #0f0; text-align: center; }
+        
+        /* Default Green Button */
         button { background: #000; color: #0f0; padding: 15px 30px; font-size: 18px; border: 2px solid #0f0; cursor: pointer; font-weight: bold; }
         button:hover { background: #0f0; color: #000; }
         
@@ -31,7 +38,7 @@
         @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-2px, -2px); } 100% { transform: translate(0, 0); } }
         .glitch-active { animation: shake 0.1s infinite; }
         
-        #obsession-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; font-size: 8vw; color: #f00; z-index: 0; pointer-events: none; animation: flicker-glitch 3s infinite; font-weight: bold; }
+        #obsession-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; font-size: 8vw; color: #f00; z-index: 0; pointer-events: none; animation: flicker-glitch 3s infinite; font-family: 'Grape Nuts', cursive; font-weight: bold; }
         @keyframes flicker-glitch { 
             0%, 100% { opacity: 0.2; transform: scale(1); }
             5% { opacity: 0.5; transform: scale(1.02); }
@@ -40,7 +47,6 @@
             20% { opacity: 0.2; }
         }
 
-        /* Pure Red/Black button logic */
         #drain-more-btn { background: #000; border: 2px solid #f00; color: #f00; padding: 15px 30px; font-size: 18px; cursor: pointer; font-weight: bold; }
         #drain-more-btn:hover { background: #f00 !important; color: #000 !important; border: 2px solid #000 !important; }
     </style>
@@ -65,7 +71,8 @@
         <div id="main-screen" class="hidden">
             <h1>ACCOUNT_ACCESS_GRANTED</h1>
             <div id="balance-display">$0.00</div>
-            <button onclick="startDrain()">EXECUTE_DRAIN</button>
+            <!-- This button is green by default -->
+            <button id="execute-btn" onclick="startDrain()">EXECUTE_DRAIN</button>
         </div>
 
         <div id="socials-screen" class="hidden">
@@ -182,6 +189,8 @@
         function startDrain() {
             drainSound.play();
             matrixColor = '#f00'; 
+            document.getElementById('execute-btn').style.borderColor = '#f00';
+            document.getElementById('execute-btn').style.color = '#f00';
             document.body.classList.add('glitch-active', 'red-alert');
             log("SECURITY BREACH! DRAIN INITIATED!");
             var drainInterval = setInterval(() => { currentBalance -= 85000; document.getElementById('balance-display').innerText = "$" + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}); if (currentBalance < 0) currentBalance = 0; }, 50);
