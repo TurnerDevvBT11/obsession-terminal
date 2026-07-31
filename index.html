@@ -13,7 +13,6 @@
         body.red-alert input, body.red-alert button { border-color: #ff0000 !important; color: #ff0000 !important; }
         body.red-alert a { color: #ff0000 !important; }
         #crt-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 10; }
-        #drain-logo { font-family: monospace; font-size: 12px; line-height: 10px; color: #0f0; margin-bottom: 20px; }
         .hidden { display: none !important; }
         input { display: block; margin: 10px auto; padding: 10px; background: #000; border: 1px solid #0f0; color: #0f0; text-align: center; }
         button { background: #000; color: #0f0; padding: 15px 30px; font-size: 18px; border: 2px solid #0f0; cursor: pointer; font-weight: bold; }
@@ -36,13 +35,6 @@
 
     <div id="content-wrapper">
         <div id="login-screen">
-            <pre id="drain-logo">
-DDDD   RRRR     AAA   IIIII  N   N   EEEEE  X   X  EEEEE
-D   D  R   R   A   A    I    NN  N   E       X X   E
-D   D  RRRR    AAAAA    I    N N N   EEE      X    EEE
-D   D  R  R    A   A    I    N  NN   E       X X   E
-DDDD   R   R   A   A  IIIII  N   N   EEEEE  X   X  EEEEE
-            </pre>
             <h1 id="boot-text">INITIALIZING...</h1>
             <div id="login-fields" class="hidden">
                 <input type="text" id="user" placeholder="USERNAME" onkeypress="if(event.key === 'Enter') document.getElementById('pass').focus()">
@@ -80,23 +72,27 @@ DDDD   R   R   A   A  IIIII  N   N   EEEEE  X   X  EEEEE
         const ctx = canvas.getContext('2d');
         let width, height, drops, matrixColor = '#0f0';
 
-        // 1 = where the letter parts are
+        // 1 = where the letter parts are (DRAIN.EXE and DEVV stacked)
         const mask = [
-            "11100011110011001011001",
-            "10001010000011001011001",
-            "10001011100011001011001",
-            "10001010000011001011001",
-            "11100011110001100011001"
+            "11110011111001100011110000001110011111",
+            "10001010000010001010000000100010001000",
+            "11110011111001000011100000011100111000",
+            "10001010000010001010000000100010001000",
+            "10001011111001100011110000001110011111",
+            "00000000000000000000000000000000000000",
+            "11100111100110010110010000000000000000",
+            "10001100000110010110010000000000000000",
+            "10001111000110010110010000000000000000",
+            "10001100000110010110010000000000000000",
+            "11100111100011000110010000000000000000"
         ];
 
-        // This tracks the "Locked" pixels
         let lockedGrid = []; 
 
         function resize() { 
             width = canvas.width = window.innerWidth; 
             height = canvas.height = window.innerHeight; 
             drops = Array(Math.floor(width / 20)).fill(1); 
-            // Reset grid
             lockedGrid = Array(mask.length).fill(0).map(() => Array(mask[0].length).fill(false));
         }
         window.onresize = resize; resize();
@@ -108,14 +104,14 @@ DDDD   R   R   A   A  IIIII  N   N   EEEEE  X   X  EEEEE
             // Draw locked chars
             ctx.fillStyle = matrixColor;
             ctx.font = '20px monospace';
-            const startX = (width / 2) - 200;
-            const startY = (height / 2) - 50;
+            // Center the whole block
+            const startX = (width / 2) - (mask[0].length * 10);
+            const startY = (height / 2) - 150;
 
             let allFilled = true;
             for (let r = 0; r < mask.length; r++) {
                 for (let c = 0; c < mask[r].length; c++) {
                     if (mask[r][c] === '1') {
-                        // Randomly lock in pixels
                         if (!lockedGrid[r][c] && Math.random() > 0.98) {
                             lockedGrid[r][c] = true;
                         }
@@ -129,16 +125,13 @@ DDDD   R   R   A   A  IIIII  N   N   EEEEE  X   X  EEEEE
                 }
             }
 
-            // If all full, reset
             if (allFilled) {
                 setTimeout(() => { lockedGrid = Array(mask.length).fill(0).map(() => Array(mask[0].length).fill(false)); }, 2000);
             }
 
-            // Draw falling rain
             ctx.fillStyle = matrixColor;
             ctx.font = '15px monospace';
             drops.forEach((y, i) => {
-                // Only draw rain if not occupied by a locked char (visual polish)
                 ctx.fillText(Math.random() > 0.5 ? '1' : '0', i * 20, y * 20);
                 if (y * 20 > height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
@@ -146,7 +139,6 @@ DDDD   R   R   A   A  IIIII  N   N   EEEEE  X   X  EEEEE
         }
         setInterval(drawMatrix, 50);
 
-        // --- System Logic (Unchanged) ---
         const bootText = document.getElementById('boot-text');
         setTimeout(() => { bootText.innerText = "> LOADING SECURITY PROTOCOLS..."; }, 1000);
         setTimeout(() => { bootText.innerText = "> ACCESS LEVEL: RESTRICTED"; }, 2000);
