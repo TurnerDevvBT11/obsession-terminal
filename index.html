@@ -3,41 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title>SYSTEM_LOCKED</title>
-    <link href="https://fonts.googleapis.com/css2?family=Grape+Nuts&display=swap" rel="stylesheet">
     <style>
         body { margin: 0; padding: 0; background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: center; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: background 0.5s, color 0.5s; overflow: hidden; cursor: crosshair; }
+        
         #matrix-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
         #content-wrapper { position: relative; z-index: 2; width: 100%; transition: 0.3s; }
+
         body:hover { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="5" fill="red"/></svg>'), auto; }
+
         @keyframes strobe { 0% { border-color: #f00; } 50% { border-color: transparent; } 100% { border-color: #f00; } }
-        
         body.red-alert { background: #220000 !important; color: #ff0000 !important; border: 10px solid #f00; animation: strobe 0.5s infinite; box-sizing: border-box; }
-        body.red-alert input, body.red-alert button, body.red-alert a { border-color: #ff0000 !important; color: #ff0000 !important; }
-        body.red-alert button:hover, body.red-alert a:hover { background: #ff0000 !important; color: #000 !important; }
-        
+        body.red-alert input, body.red-alert button { border-color: #ff0000 !important; color: #ff0000 !important; }
+        body.red-alert a { color: #ff0000 !important; }
+
         #crt-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 10; }
+
         .hidden { display: none !important; }
         input { display: block; margin: 10px auto; padding: 10px; background: #000; border: 1px solid #0f0; color: #0f0; text-align: center; }
         button { background: #000; color: #0f0; padding: 15px 30px; font-size: 18px; border: 2px solid #0f0; cursor: pointer; font-weight: bold; }
         button:hover { background: #0f0; color: #000; }
-        #socials-screen a { color: #0f0; display: block; margin: 20px; font-size: 24px; text-decoration: none; border: 1px solid #0f0; width: fit-content; margin: 20px auto; padding: 5px 15px;}
-        #socials-screen a:hover { background: #0f0; color: #000; }
-        #socials-screen h1 { color: #f00; }
+        a { color: #0f0; display: block; margin: 20px; font-size: 24px; text-decoration: none; }
+        
         #balance-display { font-size: 3em; margin: 20px 0; font-weight: bold; }
         #progress-bar { width: 300px; height: 20px; border: 1px solid #0f0; margin: 10px auto; }
         #progress-fill { height: 100%; background: #0f0; width: 0%; transition: 0.3s; }
         #terminal-log { position: fixed; bottom: 10px; left: 10px; text-align: left; font-size: 12px; opacity: 0.7; z-index: 5; max-width: 400px; }
         #terminal-log a { display: inline; color: #030; text-decoration: none; }
         #terminal-log a:hover { color: #0f0; }
+
         @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-2px, -2px); } 100% { transform: translate(0, 0); } }
         .glitch-active { animation: shake 0.1s infinite; }
-        #obsession-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; font-size: 8vw; color: #f00; z-index: 0; pointer-events: none; animation: flicker-glitch 3s infinite; font-family: 'Grape Nuts', cursive; font-weight: bold; }
-        @keyframes flicker-glitch { 0%, 100% { opacity: 0.2; transform: scale(1); } 5% { opacity: 0.5; transform: scale(1.02); } 10% { opacity: 0.1; } 15% { opacity: 0.4; } 20% { opacity: 0.2; } }
     </style>
 </head>
 <body>
+
     <canvas id="matrix-canvas"></canvas>
     <div id="crt-overlay"></div>
+
     <div id="content-wrapper">
         <div id="login-screen">
             <h1 id="boot-text">INITIALIZING...</h1>
@@ -49,76 +51,75 @@
                 <p id="error-msg" style="color: red;"></p>
             </div>
         </div>
+
         <div id="main-screen" class="hidden">
             <h1>ACCOUNT_ACCESS_GRANTED</h1>
             <div id="balance-display">$0.00</div>
             <button onclick="startDrain()">EXECUTE_DRAIN</button>
         </div>
+
         <div id="socials-screen" class="hidden">
-            <div id="obsession-bg">OBSESSION_ ACCESS_COMPLETE</div>
-            <h1 style="z-index: 2; position: relative;">ACCESS_COMPLETE</h1>
-            <div id="links" style="z-index: 2; position: relative;">
-                <a href="https://www.tiktok.com/@devv1763?_r=1&_t=ZN-98TSYcxOdJm" target="_blank" onclick="drainSound.pause()">>>> TIKTOK</a>
-                <a href="https://www.instagram.com/devv1763_?igsh=dnZpNDdndHJhMHN4" target="_blank" onclick="drainSound.pause()">>>> INSTAGRAM</a>
-                <a href="https://on.soundcloud.com/ZRibs50bwGnRhCCDb5" target="_blank" onclick="drainSound.pause()">>>> SOUNDCLOUD</a>
+            <h1>ACCESS_COMPLETE</h1>
+            <div id="links">
+                <a href="https://www.tiktok.com/@devv1763?_r=1&_t=ZN-98TSYcxOdJm" target="_blank">>>> TIKTOK</a>
+                <a href="https://www.instagram.com/devv1763_?igsh=dnZpNDdndHJhMHN4" target="_blank">>>> INSTAGRAM</a>
+                <a href="https://on.soundcloud.com/ZRibs50bwGnRhCCDb5" target="_blank">>>> SOUNDCLOUD</a>
             </div>
-            <button onclick="location.reload()" style="margin-top: 50px; position: relative; z-index: 20;">DRAIN_MORE</button>
+            <!-- The label is now correctly DRAIN_MORE -->
+            <button onclick="location.reload()" style="margin-top: 50px; position: relative; z-index: 20; border: 2px solid #f00; color: #f00;">DRAIN_MORE</button>
         </div>
     </div>
+
     <div id="terminal-log">
         > SYSTEM READY...<br>
         > <a href="https://youtu.be/roPQ_M3yJTA?si=RGhwpRc6aMNhwP0X" target="_blank">SYS_LOG_0123</a>
     </div>
+
     <script>
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
-        let width, height, drops, matrixColor = '#0f0';
-        let isLoggedIn = false;
-        const mask = ["11110011111001100011110000001110011111","10001010000010001010000000100010001000","11110011111001000011100000011100111000","10001010000010001010000000100010001000","10001011111001100011110000001110011111"];
-        let lockedGrid = []; 
-        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; drops = Array(Math.floor(width / 20)).fill(1); lockedGrid = Array(mask.length).fill(0).map(() => Array(mask[0].length).fill(false)); }
+        let width, height, drops;
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; drops = Array(Math.floor(width / 20)).fill(1); }
         window.onresize = resize; resize();
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, width, height);
-            if (!isLoggedIn) {
-                ctx.fillStyle = matrixColor; ctx.font = '30px monospace';
-                const startX = (width / 2) - (mask[0].length * 15); const startY = (height / 2) - 250;
-                let allFilled = true;
-                for (let r = 0; r < mask.length; r++) { for (let c = 0; c < mask[r].length; c++) { if (mask[r][c] === '1') { if (!lockedGrid[r][c] && Math.random() > 0.98) lockedGrid[r][c] = true; if (lockedGrid[r][c]) ctx.fillText(Math.random() > 0.5 ? '1' : '0', startX + (c * 30), startY + (r * 35)); else allFilled = false; } } }
-                if (allFilled) setTimeout(() => { lockedGrid = Array(mask.length).fill(0).map(() => Array(mask[0].length).fill(false)); }, 2000);
-            }
-            ctx.fillStyle = matrixColor; ctx.font = '15px monospace';
-            drops.forEach((y, i) => { ctx.fillText(Math.random() > 0.5 ? '1' : '0', i * 20, y * 20); if (y * 20 > height && Math.random() > 0.975) drops[i] = 0; drops[i]++; });
-        }
+        let matrixColor = '#0f0';
+        function drawMatrix() { ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, width, height); ctx.fillStyle = matrixColor; ctx.font = '15px monospace'; drops.forEach((y, i) => { const text = Math.random() > 0.5 ? '1' : '0'; ctx.fillText(text, i * 20, y * 20); if (y * 20 > height && Math.random() > 0.975) drops[i] = 0; drops[i]++; }); }
         setInterval(drawMatrix, 50);
+
         const bootText = document.getElementById('boot-text');
         setTimeout(() => { bootText.innerText = "> LOADING SECURITY PROTOCOLS..."; }, 1000);
         setTimeout(() => { bootText.innerText = "> ACCESS LEVEL: RESTRICTED"; }, 2000);
         setTimeout(() => { bootText.classList.add('hidden'); document.getElementById('login-fields').classList.remove('hidden'); }, 3000);
+
+        setInterval(() => { log("MONITORING CONNECTION..."); }, 8000);
+
         var drainSound = new Audio('https://github.com/TurnerDevvBT11/obsession-terminal/raw/main/Forever%20by%20the%20little%20dippers%20(Instrumental%20version)%20-%20I%20just%20a%20comment%20guy%20don%27t%20ask%20me%20(youtube).mp3');
         var currentBalance = 0;
         function log(msg) { document.getElementById('terminal-log').innerHTML += "<br>> " + msg; }
+
         function checkLogin() {
             var u = document.getElementById('user').value.toLowerCase();
             var p = document.getElementById('pass').value.toLowerCase();
             const target = "obsession";
+            
             if (u === "devv" && p === target) {
-                isLoggedIn = true;
                 currentBalance = (Math.random() * (9000000 - 1000000) + 1000000);
                 document.getElementById('balance-display').innerText = "$" + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('main-screen').classList.remove('hidden');
-                log("drain.exe... INITIALIZED");
+                log("AUTH SUCCESS. ACCESS GRANTED.");
             } else {
-                let matches = 0; for(let i = 0; i < p.length && i < target.length; i++) { if(p[i] === target[i]) matches++; }
+                let matches = 0;
+                for(let i = 0; i < p.length && i < target.length; i++) { if(p[i] === target[i]) matches++; }
                 let percent = (matches / target.length) * 100;
                 document.getElementById('progress-fill').style.width = percent + "%";
                 document.getElementById('error-msg').innerText = "ACCESS_DENIED";
+                log("BRUTE FORCE: " + Math.round(percent) + "% MATCH");
             }
         }
+
         function startDrain() {
             drainSound.play();
-            matrixColor = '#f00'; 
+            matrixColor = '#f00';
             document.body.classList.add('glitch-active', 'red-alert');
             log("SECURITY BREACH! DRAIN INITIATED!");
             var drainInterval = setInterval(() => { currentBalance -= 85000; document.getElementById('balance-display').innerText = "$" + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}); if (currentBalance < 0) currentBalance = 0; }, 50);
