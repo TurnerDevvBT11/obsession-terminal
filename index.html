@@ -4,42 +4,34 @@
     <meta charset="UTF-8">
     <title>SYSTEM_LOCKED</title>
     <style>
-        /* Base Reset */
-        body { margin: 0; padding: 0; background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: center; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; cursor: crosshair; }
+        body { margin: 0; padding: 0; background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: center; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: background 0.5s, color 0.5s; overflow: hidden; cursor: crosshair; }
         
-        /* Background Matrix Layer */
         #matrix-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
-        
-        /* CRT Overlay Layer */
-        #crt-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 2; }
+        #content-wrapper { position: relative; z-index: 2; width: 100%; transition: 0.3s; }
 
-        /* UI Wrapper Layer */
-        #content-wrapper { position: relative; z-index: 10; width: 100%; }
-
-        /* Inputs & Buttons - Overriding Defaults */
-        input { background: #000 !important; border: 1px solid #0f0 !important; color: #0f0 !important; padding: 10px; text-align: center; display: block; margin: 10px auto; width: 250px; }
-        button { background: #000 !important; color: #0f0 !important; padding: 15px 30px; border: 2px solid #0f0 !important; cursor: pointer; font-weight: bold; }
-        button:hover { background: #0f0 !important; color: #000 !important; }
-
-        /* Breach Message Layer */
-        #breach-msg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 5em; color: red; z-index: 100; pointer-events: none; opacity: 0; text-shadow: 0 0 20px #f00; }
-        @keyframes flash { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
-        .flash-active { animation: flash 0.1s infinite !important; }
+        #crt-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 10; }
 
         .hidden { display: none !important; }
-        #progress-bar { width: 300px; height: 10px; border: 1px solid #0f0; margin: 10px auto; }
-        #progress-fill { height: 100%; background: #0f0; width: 0%; transition: 0.3s; }
-        #terminal-log { position: fixed; bottom: 10px; left: 10px; text-align: left; font-size: 12px; opacity: 0.7; z-index: 5; pointer-events: none; }
+        input { display: block; margin: 10px auto; padding: 10px; background: #000; border: 1px solid #0f0; color: #0f0; text-align: center; }
+        button { background: #000; color: #0f0; padding: 15px 30px; font-size: 18px; border: 2px solid #0f0; cursor: pointer; font-weight: bold; }
+        button:hover { background: #0f0; color: #000; }
+        a { color: #0f0; display: block; margin: 20px; font-size: 24px; text-decoration: none; }
         
-        /* Red Alert */
-        body.red-alert { background: #220000 !important; color: #ff0000 !important; }
+        #balance-display { font-size: 3em; margin: 20px 0; font-weight: bold; }
+        #progress-bar { width: 300px; height: 20px; border: 1px solid #0f0; margin: 10px auto; }
+        #progress-fill { height: 100%; background: #0f0; width: 0%; transition: 0.3s; }
+        #terminal-log { position: fixed; bottom: 10px; left: 10px; text-align: left; font-size: 12px; opacity: 0.7; z-index: 5; max-width: 400px; }
+        #terminal-log a { display: inline; color: #030; text-decoration: none; }
+        #terminal-log a:hover { color: #0f0; }
+
+        @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-2px, -2px); } 100% { transform: translate(0, 0); } }
+        .glitch-active { animation: shake 0.1s infinite; }
     </style>
 </head>
 <body>
 
     <canvas id="matrix-canvas"></canvas>
     <div id="crt-overlay"></div>
-    <div id="breach-msg">YOU WONT GET AWAY WITH THIS</div>
 
     <div id="content-wrapper">
         <div id="login-screen">
@@ -55,6 +47,7 @@
 
         <div id="main-screen" class="hidden">
             <h1>ACCOUNT_ACCESS_GRANTED</h1>
+            <div id="balance-display">$0.00</div>
             <button onclick="startDrain()">EXECUTE_DRAIN</button>
         </div>
 
@@ -67,7 +60,10 @@
         </div>
     </div>
 
-    <div id="terminal-log"><div id="log-content">> SYSTEM READY...</div></div>
+    <div id="terminal-log">
+        > SYSTEM READY...<br>
+        > <a href="https://youtu.be/roPQ_M3yJTA?si=RGhwpRc6aMNhwP0X" target="_blank">SYS_LOG_0123</a>
+    </div>
 
     <script>
         const canvas = document.getElementById('matrix-canvas');
@@ -77,27 +73,28 @@
         let drops = Array(Math.floor(canvas.width / 20)).fill(1);
         setInterval(() => { ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#0f0'; drops.forEach((y, i) => { ctx.fillText('1', i * 20, y * 20); drops[i] = y * 20 > canvas.height ? 0 : y + 1; }); }, 50);
 
-        function log(msg) { document.getElementById('log-content').innerHTML += "<br>> " + msg; }
         setTimeout(() => { document.getElementById('boot-text').classList.add('hidden'); document.getElementById('login-fields').classList.remove('hidden'); }, 3000);
 
-        let loginAttempts = 0;
         function checkLogin() {
-            let u = document.getElementById('user');
+            let u = document.getElementById('user').value.toLowerCase();
             let p = document.getElementById('pass').value.toLowerCase();
-            if (u.value.toLowerCase() === "devv" && p === "obsession") {
+            const target = "obsession";
+            
+            if (u === "devv" && p === target) {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('main-screen').classList.remove('hidden');
             } else {
-                if (++loginAttempts === 1) { u.value = "WE_ARE_ALWAYS_WATCHING"; u.disabled = true; }
-                let percent = (p.length > 0) ? 11 : 0;
-                document.getElementById('progress-fill').style.width = percent + "%";
-                log("ACCESS_DENIED");
+                let matches = 0;
+                for(let i = 0; i < p.length && i < target.length; i++) { if(p[i] === target[i]) matches++; }
+                document.getElementById('progress-fill').style.width = (matches / target.length) * 100 + "%";
+                document.getElementById('error-msg').innerText = "ACCESS_DENIED";
             }
         }
 
         function startDrain() {
-            document.body.classList.add('red-alert');
-            document.getElementById('breach-msg').classList.add('flash-active');
+            document.body.classList.add('glitch-active');
+            var balance = 5000000;
+            var drainInterval = setInterval(() => { balance -= 85000; document.getElementById('balance-display').innerText = "$" + balance.toLocaleString(); if (balance < 0) clearInterval(drainInterval); }, 50);
             setTimeout(() => { document.getElementById('main-screen').classList.add('hidden'); document.getElementById('socials-screen').classList.remove('hidden'); }, 1500);
         }
     </script>
