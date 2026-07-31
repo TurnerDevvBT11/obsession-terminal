@@ -17,7 +17,11 @@
         input { display: block; margin: 10px auto; padding: 10px; background: #000; border: 1px solid #0f0; color: #0f0; text-align: center; }
         button { background: #000; color: #0f0; padding: 15px 30px; font-size: 18px; border: 2px solid #0f0; cursor: pointer; font-weight: bold; }
         button:hover { background: #0f0; color: #000; }
-        a { color: #0f0; display: block; margin: 20px; font-size: 24px; text-decoration: none; }
+        
+        /* Red/Black only links for final screen */
+        #socials-screen a { color: #f00; display: block; margin: 20px; font-size: 24px; text-decoration: none; border: 1px solid #f00; width: fit-content; margin: 20px auto; padding: 5px 15px;}
+        #socials-screen h1 { color: #f00; }
+
         #balance-display { font-size: 3em; margin: 20px 0; font-weight: bold; }
         #progress-bar { width: 300px; height: 20px; border: 1px solid #0f0; margin: 10px auto; }
         #progress-fill { height: 100%; background: #0f0; width: 0%; transition: 0.3s; }
@@ -35,6 +39,10 @@
             15% { opacity: 0.4; }
             20% { opacity: 0.2; }
         }
+
+        /* Pure Red/Black button logic */
+        #drain-more-btn { background: #000; border: 2px solid #f00; color: #f00; padding: 15px 30px; font-size: 18px; cursor: pointer; font-weight: bold; }
+        #drain-more-btn:hover { background: #f00 !important; color: #000 !important; border: 2px solid #000 !important; }
     </style>
 </head>
 <body>
@@ -68,7 +76,7 @@
                 <a href="https://www.instagram.com/devv1763_?igsh=dnZpNDdndHJhMHN4" target="_blank" onclick="drainSound.pause()">>>> INSTAGRAM</a>
                 <a href="https://on.soundcloud.com/ZRibs50bwGnRhCCDb5" target="_blank" onclick="drainSound.pause()">>>> SOUNDCLOUD</a>
             </div>
-            <button onclick="location.reload()" style="margin-top: 50px; position: relative; z-index: 20; border: 2px solid #f00; color: #f00;">DRAIN_MORE</button>
+            <button id="drain-more-btn" onclick="location.reload()" style="margin-top: 50px; position: relative; z-index: 20;">DRAIN_MORE</button>
         </div>
     </div>
 
