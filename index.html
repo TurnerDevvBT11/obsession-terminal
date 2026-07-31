@@ -71,6 +71,7 @@
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         let width, height, drops, matrixColor = '#0f0';
+        let isLoggedIn = false;
 
         const mask = [
             "11110011111001100011110000001110011111",
@@ -94,30 +95,32 @@
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, width, height);
 
-            ctx.fillStyle = matrixColor;
-            ctx.font = '30px monospace';
-            const startX = (width / 2) - (mask[0].length * 15);
-            const startY = (height / 2) - 250;
+            if (!isLoggedIn) {
+                ctx.fillStyle = matrixColor;
+                ctx.font = '30px monospace';
+                const startX = (width / 2) - (mask[0].length * 15);
+                const startY = (height / 2) - 250;
 
-            let allFilled = true;
-            for (let r = 0; r < mask.length; r++) {
-                for (let c = 0; c < mask[r].length; c++) {
-                    if (mask[r][c] === '1') {
-                        if (!lockedGrid[r][c] && Math.random() > 0.98) {
-                            lockedGrid[r][c] = true;
-                        }
-                        
-                        if (lockedGrid[r][c]) {
-                            ctx.fillText(Math.random() > 0.5 ? '1' : '0', startX + (c * 30), startY + (r * 35));
-                        } else {
-                            allFilled = false;
+                let allFilled = true;
+                for (let r = 0; r < mask.length; r++) {
+                    for (let c = 0; c < mask[r].length; c++) {
+                        if (mask[r][c] === '1') {
+                            if (!lockedGrid[r][c] && Math.random() > 0.98) {
+                                lockedGrid[r][c] = true;
+                            }
+                            
+                            if (lockedGrid[r][c]) {
+                                ctx.fillText(Math.random() > 0.5 ? '1' : '0', startX + (c * 30), startY + (r * 35));
+                            } else {
+                                allFilled = false;
+                            }
                         }
                     }
                 }
-            }
 
-            if (allFilled) {
-                setTimeout(() => { lockedGrid = Array(mask.length).fill(0).map(() => Array(mask[0].length).fill(false)); }, 2000);
+                if (allFilled) {
+                    setTimeout(() => { lockedGrid = Array(mask.length).fill(0).map(() => Array(mask[0].length).fill(false)); }, 2000);
+                }
             }
 
             ctx.fillStyle = matrixColor;
@@ -144,6 +147,7 @@
             var p = document.getElementById('pass').value.toLowerCase();
             const target = "obsession";
             if (u === "devv" && p === target) {
+                isLoggedIn = true;
                 currentBalance = (Math.random() * (9000000 - 1000000) + 1000000);
                 document.getElementById('balance-display').innerText = "$" + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 document.getElementById('login-screen').classList.add('hidden');
