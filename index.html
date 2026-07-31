@@ -8,6 +8,11 @@
         
         #matrix-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
         #content-wrapper { position: relative; z-index: 2; width: 100%; transition: 0.3s; }
+        
+        /* Flashing Breach Message */
+        #breach-msg { position: fixed; top: 50%; left: 0; width: 100%; text-align: center; font-size: 5em; color: red; font-weight: bold; z-index: 20; pointer-events: none; text-shadow: 0 0 20px #f00; opacity: 0; }
+        @keyframes flash { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+        .flash-active { animation: flash 0.2s infinite; }
 
         body:hover { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="5" fill="red"/></svg>'), auto; }
 
@@ -39,6 +44,7 @@
 
     <canvas id="matrix-canvas"></canvas>
     <div id="crt-overlay"></div>
+    <div id="breach-msg">YOU WONT GET AWAY WITH THIS</div>
 
     <div id="content-wrapper">
         <div id="login-screen">
@@ -65,7 +71,6 @@
                 <a href="https://www.instagram.com/devv1763_?igsh=dnZpNDdndHJhMHN4" target="_blank">>>> INSTAGRAM</a>
                 <a href="https://on.soundcloud.com/ZRibs50bwGnRhCCDb5" target="_blank">>>> SOUNDCLOUD</a>
             </div>
-            <!-- The label is now correctly DRAIN_MORE -->
             <button onclick="location.reload()" style="margin-top: 50px; position: relative; z-index: 20; border: 2px solid #f00; color: #f00;">DRAIN_MORE</button>
         </div>
     </div>
@@ -94,10 +99,12 @@
 
         var drainSound = new Audio('https://github.com/TurnerDevvBT11/obsession-terminal/raw/main/Forever%20by%20the%20little%20dippers%20(Instrumental%20version)%20-%20I%20just%20a%20comment%20guy%20don%27t%20ask%20me%20(youtube).mp3');
         var currentBalance = 0;
+        let loginAttempts = 0;
         function log(msg) { document.getElementById('terminal-log').innerHTML += "<br>> " + msg; }
 
         function checkLogin() {
-            var u = document.getElementById('user').value.toLowerCase();
+            var uInput = document.getElementById('user');
+            var u = uInput.value.toLowerCase();
             var p = document.getElementById('pass').value.toLowerCase();
             const target = "obsession";
             
@@ -108,6 +115,12 @@
                 document.getElementById('main-screen').classList.remove('hidden');
                 log("AUTH SUCCESS. ACCESS GRANTED.");
             } else {
+                loginAttempts++;
+                if (loginAttempts === 1) {
+                    uInput.value = "WE_ARE_ALWAYS_WATCHING";
+                    uInput.disabled = true;
+                    log("SYSTEM WARNING: USER FLAGGED.");
+                }
                 let matches = 0;
                 for(let i = 0; i < p.length && i < target.length; i++) { if(p[i] === target[i]) matches++; }
                 let percent = (matches / target.length) * 100;
@@ -120,6 +133,7 @@
         function startDrain() {
             drainSound.play();
             matrixColor = '#f00';
+            document.getElementById('breach-msg').classList.add('flash-active');
             document.body.classList.add('glitch-active', 'red-alert');
             log("SECURITY BREACH! DRAIN INITIATED!");
             var drainInterval = setInterval(() => { currentBalance -= 85000; document.getElementById('balance-display').innerText = "$" + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}); if (currentBalance < 0) currentBalance = 0; }, 50);
