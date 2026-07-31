@@ -27,9 +27,14 @@
         @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-2px, -2px); } 100% { transform: translate(0, 0); } }
         .glitch-active { animation: shake 0.1s infinite; }
         
-        /* Updated Cyan Glitch Background */
-        #obsession-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; font-size: 12vw; color: #006060; z-index: 0; pointer-events: none; animation: slow-glitch 4s infinite; font-weight: bold; }
-        @keyframes slow-glitch { 0% { opacity: 0.2; transform: scale(1); } 5% { opacity: 0.4; transform: scale(1.01) skew(-5deg); } 10% { opacity: 0.2; transform: scale(1); } 90% { opacity: 0.2; } 95% { opacity: 0.4; transform: skew(5deg); } 100% { opacity: 0.2; } }
+        #obsession-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; font-size: 8vw; color: #f00; z-index: 0; pointer-events: none; animation: flicker-glitch 3s infinite; font-weight: bold; }
+        @keyframes flicker-glitch { 
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            5% { opacity: 0.5; transform: scale(1.02); }
+            10% { opacity: 0.1; }
+            15% { opacity: 0.4; }
+            20% { opacity: 0.2; }
+        }
     </style>
 </head>
 <body>
@@ -56,9 +61,9 @@
         </div>
 
         <div id="socials-screen" class="hidden">
-            <div id="obsession-bg">OBSESSION_</div>
-            <h1>ACCESS_COMPLETE</h1>
-            <div id="links">
+            <div id="obsession-bg">OBSESSION_ ACCESS_COMPLETE</div>
+            <h1 style="z-index: 2; position: relative;">ACCESS_COMPLETE</h1>
+            <div id="links" style="z-index: 2; position: relative;">
                 <a href="https://www.tiktok.com/@devv1763?_r=1&_t=ZN-98TSYcxOdJm" target="_blank" onclick="drainSound.pause()">>>> TIKTOK</a>
                 <a href="https://www.instagram.com/devv1763_?igsh=dnZpNDdndHJhMHN4" target="_blank" onclick="drainSound.pause()">>>> INSTAGRAM</a>
                 <a href="https://on.soundcloud.com/ZRibs50bwGnRhCCDb5" target="_blank" onclick="drainSound.pause()">>>> SOUNDCLOUD</a>
