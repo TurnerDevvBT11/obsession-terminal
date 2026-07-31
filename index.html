@@ -9,10 +9,8 @@
         #matrix-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
         #content-wrapper { position: relative; z-index: 2; width: 100%; transition: 0.3s; }
 
-        /* Glitchy Cursor */
         body:hover { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="5" fill="red"/></svg>'), auto; }
 
-        /* Red Alert & Strobe */
         @keyframes strobe { 0% { border-color: #f00; } 50% { border-color: transparent; } 100% { border-color: #f00; } }
         body.red-alert { background: #220000 !important; color: #ff0000 !important; border: 10px solid #f00; animation: strobe 0.5s infinite; box-sizing: border-box; }
         body.red-alert input, body.red-alert button { border-color: #ff0000 !important; color: #ff0000 !important; }
@@ -63,8 +61,9 @@
                 <a href="https://www.tiktok.com/@devv1763?_r=1&_t=ZN-98TSYcxOdJm" target="_blank">>>> TIKTOK</a>
                 <a href="https://www.instagram.com/devv1763_?igsh=dnZpNDdndHJhMHN4" target="_blank">>>> INSTAGRAM</a>
                 <a href="https://on.soundcloud.com/ZRibs50bwGnRhCCDb5" target="_blank">>>> SOUNDCLOUD</a>
-                <button onclick="location.reload()" style="margin-top: 50px;">CONNECTION_SEVERED</button>
             </div>
+            <!-- Separated the button so it definitely shows -->
+            <button onclick="location.reload()" style="margin-top: 40px; border-color: #f00; color: #f00;">CONNECTION_SEVERED</button>
         </div>
     </div>
 
@@ -74,7 +73,6 @@
     </div>
 
     <script>
-        // Matrix Rain
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         let width, height, drops;
@@ -84,16 +82,13 @@
         function drawMatrix() { ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, width, height); ctx.fillStyle = matrixColor; ctx.font = '15px monospace'; drops.forEach((y, i) => { const text = Math.random() > 0.5 ? '1' : '0'; ctx.fillText(text, i * 20, y * 20); if (y * 20 > height && Math.random() > 0.975) drops[i] = 0; drops[i]++; }); }
         setInterval(drawMatrix, 50);
 
-        // Boot Sequence
         const bootText = document.getElementById('boot-text');
         setTimeout(() => { bootText.innerText = "> LOADING SECURITY PROTOCOLS..."; }, 1000);
         setTimeout(() => { bootText.innerText = "> ACCESS LEVEL: RESTRICTED"; }, 2000);
         setTimeout(() => { bootText.classList.add('hidden'); document.getElementById('login-fields').classList.remove('hidden'); }, 3000);
 
-        // Heartbeat
         setInterval(() => { log("MONITORING CONNECTION..."); }, 8000);
 
-        // App Logic
         var drainSound = new Audio('https://github.com/TurnerDevvBT11/obsession-terminal/raw/main/Forever%20by%20the%20little%20dippers%20(Instrumental%20version)%20-%20I%20just%20a%20comment%20guy%20don%27t%20ask%20me%20(youtube).mp3');
         var currentBalance = 0;
         function log(msg) { document.getElementById('terminal-log').innerHTML += "<br>> " + msg; }
