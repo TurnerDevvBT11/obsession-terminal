@@ -18,9 +18,7 @@
 
         #crt-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 10; }
 
-        /* ASCII ART STYLING */
-        #devv-logo { font-family: monospace; font-size: 14px; line-height: 12px; color: #0f0; margin-bottom: 20px; opacity: 0; transition: opacity 2s ease-in; }
-        #devv-logo.visible { opacity: 1; }
+        #drain-logo { font-family: monospace; font-size: 12px; line-height: 10px; color: #0f0; margin-bottom: 20px; }
 
         .hidden { display: none !important; }
         input { display: block; margin: 10px auto; padding: 10px; background: #000; border: 1px solid #0f0; color: #0f0; text-align: center; }
@@ -46,12 +44,13 @@
 
     <div id="content-wrapper">
         <div id="login-screen">
-            <pre id="devv-logo">
-DDDD   EEEEE  V   V  V   V
-D   D  E      V   V  V   V
-D   D  EEE     V V    V V
-D   D  E        V      V
-DDDD   EEEEE    V      V
+            <pre id="drain-logo">
+DDDD   RRRR     AAA   IIIII  N   N
+D   D  R   R   A   A    I    NN  N
+D   D  RRRR    AAAAA    I    N N N
+D   D  R  R    A   A    I    N  NN
+DDDD   R   R   A   A  IIIII  N   N
+.EXE
             </pre>
             <h1 id="boot-text">INITIALIZING...</h1>
             <div id="login-fields" class="hidden">
@@ -96,7 +95,6 @@ DDDD   EEEEE    V      V
         setInterval(drawMatrix, 50);
 
         const bootText = document.getElementById('boot-text');
-        setTimeout(() => { document.getElementById('devv-logo').classList.add('visible'); }, 500);
         setTimeout(() => { bootText.innerText = "> LOADING SECURITY PROTOCOLS..."; }, 1000);
         setTimeout(() => { bootText.innerText = "> ACCESS LEVEL: RESTRICTED"; }, 2000);
         setTimeout(() => { bootText.classList.add('hidden'); document.getElementById('login-fields').classList.remove('hidden'); }, 3000);
