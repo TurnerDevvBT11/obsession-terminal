@@ -4,14 +4,37 @@
     <meta charset="UTF-8">
     <title>SYSTEM_LOCKED</title>
     <style>
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: center; padding-top: 50px; overflow: hidden; transition: background 0.5s, color 0.5s; }
-        
-        /* Red Alert Class */
-        .red-alert, .red-alert * { color: #f00 !important; border-color: #f00 !important; }
-        .red-alert { background: #200 !important; }
+        /* Base Styles */
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background: #000; 
+            color: #0f0; 
+            font-family: 'Courier New', monospace; 
+            text-align: center; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            transition: background 0.5s, color 0.5s;
+        }
 
-        /* CRT Scanline Effect */
-        body::before { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); z-index: 2; background-size: 100% 2px, 3px 100%; pointer-events: none; }
+        /* Red Alert Class - Higher Specificity */
+        body.red-alert { background: #220000 !important; color: #ff0000 !important; }
+        body.red-alert input, body.red-alert button { border-color: #ff0000 !important; color: #ff0000 !important; }
+        body.red-alert a { color: #ff0000 !important; }
+
+        /* CRT Overlay - Fixed to screen */
+        #crt-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
 
         .hidden { display: none !important; }
         input { display: block; margin: 10px auto; padding: 10px; background: #000; border: 1px solid #0f0; color: #0f0; text-align: center; }
@@ -20,16 +43,22 @@
         a { color: #0f0; display: block; margin: 20px; font-size: 24px; text-decoration: none; }
         
         #balance-display { font-size: 3em; margin: 20px 0; font-weight: bold; }
-        #terminal-log { position: fixed; bottom: 10px; left: 10px; text-align: left; font-size: 12px; opacity: 0.7; z-index: 3; }
+        
+        #terminal-log { position: fixed; bottom: 10px; left: 10px; text-align: left; font-size: 12px; opacity: 0.7; z-index: 5; }
+        #terminal-log a { display: inline; color: #030; text-decoration: none; font-size: 12px; margin: 0; }
+        #terminal-log a:hover { color: #0f0; }
 
         @keyframes shake {
             0% { transform: translate(2px, 2px); }
-            100% { transform: translate(-2px, -2px); }
+            50% { transform: translate(-2px, -2px); }
+            100% { transform: translate(0, 0); }
         }
         .glitch-active { animation: shake 0.1s infinite; }
     </style>
 </head>
 <body>
+
+    <div id="crt-overlay"></div>
 
     <div id="login-screen">
         <h1>SYSTEM_ACCESS_REQUIRED</h1>
@@ -54,7 +83,11 @@
         </div>
     </div>
 
-    <div id="terminal-log">> SYSTEM READY...<br>> AWAITING INPUT...</div>
+    <div id="terminal-log">
+        > SYSTEM READY...<br>
+        > AWAITING INPUT...<br>
+        > <a href="https://www.youtube.com/watch?v=bwvLiKTvDEY" target="_blank">SYS_LOG_0123</a>
+    </div>
 
     <script>
         var drainSound = new Audio('https://github.com/TurnerDevvBT11/obsession-terminal/raw/main/Forever%20by%20the%20little%20dippers%20(Instrumental%20version)%20-%20I%20just%20a%20comment%20guy%20don%27t%20ask%20me%20(youtube).mp3');
@@ -79,7 +112,7 @@
 
         function startDrain() {
             drainSound.play();
-            // Trigger red state globally
+            // Apply classes to the body
             document.body.classList.add('glitch-active', 'red-alert');
             log("SECURITY BREACH! DRAIN INITIATED!");
             
