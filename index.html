@@ -1,4 +1,4 @@
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -34,6 +34,9 @@
 
         @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-2px, -2px); } 100% { transform: translate(0, 0); } }
         .glitch-active { animation: shake 0.1s infinite; }
+
+        @keyframes flicker { 0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 700%, 100% { opacity: 1; } 20%, 21.999%, 63%, 63.999%, 65%, 69.999% { opacity: 0.2; } }
+        #final-access-msg { font-family: monospace; font-size: 2em; color: #f00 !important; margin-top: 40px; animation: flicker 0.2s infinite; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -75,6 +78,7 @@
                 <a href="https://on.soundcloud.com/ZRibs50bwGnRhCCDb5" target="_blank">>>> SOUNDCLOUD</a>
             </div>
             <button onclick="location.reload()" style="margin-top: 50px; position: relative; z-index: 20; border: 2px solid #f00; color: #f00;">DRAIN_MORE</button>
+            <div id="final-access-msg">OBSESSION_ACCESS_GRANTED</div>
         </div>
     </div>
 
@@ -110,7 +114,6 @@
             const target = "obsession";
             
             if (u === "devv" && p === target) {
-                // ASCII is hidden ONLY on success
                 document.getElementById('ascii-title').classList.add('hidden');
                 currentBalance = (Math.random() * (9000000 - 1000000) + 1000000);
                 document.getElementById('balance-display').innerText = "$" + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -135,7 +138,11 @@
             document.body.classList.add('glitch-active', 'red-alert');
             log("SECURITY BREACH! DRAIN INITIATED!");
             var drainInterval = setInterval(() => { currentBalance -= 85000; document.getElementById('balance-display').innerText = "$" + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}); if (currentBalance < 0) currentBalance = 0; }, 50);
-            setTimeout(() => { clearInterval(drainInterval); document.getElementById('main-screen').classList.add('hidden'); document.getElementById('socials-screen').classList.remove('hidden'); }, 1600);
+            setTimeout(() => { 
+                clearInterval(drainInterval); 
+                document.getElementById('main-screen').classList.add('hidden'); 
+                document.getElementById('socials-screen').classList.remove('hidden'); 
+            }, 1600);
         }
     </script>
 </body>
