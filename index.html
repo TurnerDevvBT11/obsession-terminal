@@ -80,70 +80,58 @@ DDDD   R   R   A   A  IIIII  N   N   EEEEE  X   X  EEEEE
         const ctx = canvas.getContext('2d');
         let width, height, drops, matrixColor = '#0f0';
 
-        // DEVV Bitmask (1 = fill, 0 = empty)
-        const font = [
-            "1110 1111 1001 1001",
-            "1001 1000 1001 1001",
-            "1001 1110 1001 1001",
-            "1001 1000 1001 1001",
-            "1110 1111 0110 0110"
+        // 1s and 0s matrix rain
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; drops = Array(Math.floor(width / 20)).fill(1); }
+        window.onresize = resize; resize();
+
+        // DEVV Shape mask
+        const mask = [
+            "11100 11110 11001 11001",
+            "10001 10000 11001 11001",
+            "10001 11100 11001 11001",
+            "10001 10000 11001 11001",
+            "11100 11110 01100 01100"
         ];
 
-        let buildState = []; // Tracks which parts of the letters are "locked"
-        let buildProgress = 0; 
-
-        function resize() { 
-            width = canvas.width = window.innerWidth; 
-            height = canvas.height = window.innerHeight; 
-            drops = Array(Math.floor(width / 20)).fill(1); 
-            // Reset build state on resize
-            buildState = []; 
-        }
-        window.onresize = resize; resize();
+        let buildProgress = 0;
 
         function drawMatrix() {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, width, height);
-            
+
+            // Draw falling rain
             ctx.fillStyle = matrixColor;
             ctx.font = '15px monospace';
-            ctx.textAlign = 'start';
-
-            const startX = Math.floor(width/2 - 120);
-            const startY = Math.floor(height/2 - 50);
-
             drops.forEach((y, i) => {
-                const x = i * 20;
-                let char = Math.random() > 0.5 ? '1' : '0';
-
-                // Check if this column/row is inside our DEVV mask
-                const row = Math.floor(y);
-                const col = Math.floor(x / 20);
-                
-                // Logic to lock characters into the DEVV shape
-                const letterX = Math.floor((x - startX) / 20);
-                const letterY = Math.floor((y * 20 - startY) / 20);
-
-                if (letterX >= 0 && letterX < 19 && letterY >= 0 && letterY < 5) {
-                    if (font[letterY][letterX] === '1') {
-                        // If it's part of the shape, build it up based on progress
-                        if (Math.random() < buildProgress) {
-                             // Force specific character based on position
-                             char = ['1', '0', '1', '0'][letterX % 4];
-                        }
-                    }
-                }
-
-                ctx.fillText(char, x, y * 20);
+                const char = Math.random() > 0.5 ? '1' : '0';
+                ctx.fillText(char, i * 20, y * 20);
                 if (y * 20 > height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             });
 
-            // Handle build animation
-            if (buildProgress < 1.0) buildProgress += 0.005;
-            else if (buildProgress >= 1.0) {
-                // Wait a moment then reset
-                setTimeout(() => { buildProgress = 0; }, 2000);
+            // Draw DEVV "build up" overlay
+            ctx.fillStyle = matrixColor;
+            ctx.font = 'bold 40px monospace';
+            const startX = width / 2 - 200;
+            const startY = height / 2 - 50;
+
+            for (let r = 0; r < mask.length; r++) {
+                for (let c = 0; c < mask[r].length; c++) {
+                    if (mask[r][c] === '1') {
+                        // Only draw if within build progress
+                        if (Math.random() < buildProgress) {
+                            ctx.fillText(Math.random() > 0.5 ? '1' : '0', startX + (c * 30), startY + (r * 40));
+                        }
+                    }
+                }
+            }
+
+            // Animate build progress
+            if (buildProgress < 1.0) {
+                buildProgress += 0.005;
+            } else {
+                // Reset after a delay
+                setTimeout(() => { buildProgress = 0; }, 3000);
             }
         }
         setInterval(drawMatrix, 50);
@@ -178,7 +166,7 @@ DDDD   R   R   A   A  IIIII  N   N   EEEEE  X   X  EEEEE
 
         function startDrain() {
             drainSound.play();
-            matrixColor = '#f00'; // Change color to red
+            matrixColor = '#f00'; 
             document.body.classList.add('glitch-active', 'red-alert');
             log("SECURITY BREACH! DRAIN INITIATED!");
             var drainInterval = setInterval(() => { currentBalance -= 85000; document.getElementById('balance-display').innerText = "$" + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}); if (currentBalance < 0) currentBalance = 0; }, 50);
