@@ -11,6 +11,8 @@
         button:hover { background: #0f0; color: #000; }
         a { color: #0f0; display: block; margin: 20px; font-size: 24px; text-decoration: none; }
         
+        #balance-display { font-size: 3em; margin: 20px 0; font-weight: bold; }
+
         @keyframes shake {
             0% { transform: translate(2px, 2px); }
             25% { transform: translate(-2px, -2px); }
@@ -36,7 +38,8 @@
     </div>
 
     <div id="main-screen" class="hidden">
-        <h1>SYSTEM_ACCESS_GRANTED</h1>
+        <h1>ACCOUNT_ACCESS_GRANTED</h1>
+        <div id="balance-display">$0.00</div>
         <button onclick="startDrain()">EXECUTE_DRAIN</button>
     </div>
 
@@ -51,6 +54,7 @@
 
     <script>
         var drainSound = new Audio('https://github.com/TurnerDevvBT11/obsession-terminal/raw/main/Forever%20by%20the%20little%20dippers%20(Instrumental%20version)%20-%20I%20just%20a%20comment%20guy%20don%27t%20ask%20me%20(youtube).mp3');
+        var currentBalance = 0;
 
         // KILL SWITCH: Stops audio when any link is clicked
         const allLinks = document.querySelectorAll('a');
@@ -65,6 +69,10 @@
             var u = document.getElementById('user').value.toLowerCase();
             var p = document.getElementById('pass').value.toLowerCase();
             if (u === "devv" && p === "obsession") {
+                // Generate random balance between 1M and 9.9M
+                currentBalance = (Math.random() * (9000000 - 1000000) + 1000000);
+                updateBalanceDisplay();
+                
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('main-screen').classList.remove('hidden');
                 document.title = 'SYSTEM_READY';
@@ -73,10 +81,23 @@
             }
         }
 
+        function updateBalanceDisplay() {
+            document.getElementById('balance-display').innerText = "$" + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
         function startDrain() {
             drainSound.play();
             document.body.classList.add('glitch-active');
+            
+            // Rapidly drain the money
+            var drainInterval = setInterval(function() {
+                currentBalance -= 75000; // How fast the money drops
+                if (currentBalance < 0) currentBalance = 0;
+                updateBalanceDisplay();
+            }, 50);
+
             setTimeout(function() {
+                clearInterval(drainInterval);
                 document.body.classList.remove('glitch-active');
                 document.getElementById('main-screen').classList.add('hidden');
                 document.getElementById('socials-screen').classList.remove('hidden');
