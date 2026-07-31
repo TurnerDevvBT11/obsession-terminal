@@ -53,8 +53,8 @@
   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝
             </pre>
             <div id="login-fields" class="hidden">
-                <input type="text" id="user" placeholder="USERNAME" onfocus="document.getElementById('ascii-title').classList.add('hidden')" onkeypress="if(event.key === 'Enter') document.getElementById('pass').focus()">
-                <input type="password" id="pass" placeholder="PASSWORD" onfocus="document.getElementById('ascii-title').classList.add('hidden')" onkeypress="if(event.key === 'Enter') checkLogin()">
+                <input type="text" id="user" placeholder="USERNAME" onkeypress="if(event.key === 'Enter') document.getElementById('pass').focus()">
+                <input type="password" id="pass" placeholder="PASSWORD" onkeypress="if(event.key === 'Enter') checkLogin()">
                 <button onclick="checkLogin()">LOGIN</button>
                 <div id="progress-bar"><div id="progress-fill"></div></div>
                 <p id="error-msg" style="color: red;"></p>
@@ -110,6 +110,7 @@
             const target = "obsession";
             
             if (u === "devv" && p === target) {
+                // ASCII is hidden ONLY on success
                 document.getElementById('ascii-title').classList.add('hidden');
                 currentBalance = (Math.random() * (9000000 - 1000000) + 1000000);
                 document.getElementById('balance-display').innerText = "$" + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
