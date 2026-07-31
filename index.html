@@ -9,8 +9,10 @@
         #matrix-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
         #content-wrapper { position: relative; z-index: 2; width: 100%; transition: 0.3s; }
 
+        /* Glitchy Cursor */
         body:hover { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="5" fill="red"/></svg>'), auto; }
 
+        /* Red Alert & Strobe */
         @keyframes strobe { 0% { border-color: #f00; } 50% { border-color: transparent; } 100% { border-color: #f00; } }
         body.red-alert { background: #220000 !important; color: #ff0000 !important; border: 10px solid #f00; animation: strobe 0.5s infinite; box-sizing: border-box; }
         body.red-alert input, body.red-alert button { border-color: #ff0000 !important; color: #ff0000 !important; }
@@ -62,8 +64,8 @@
                 <a href="https://www.instagram.com/devv1763_?igsh=dnZpNDdndHJhMHN4" target="_blank">>>> INSTAGRAM</a>
                 <a href="https://on.soundcloud.com/ZRibs50bwGnRhCCDb5" target="_blank">>>> SOUNDCLOUD</a>
             </div>
-            <!-- Separated the button so it definitely shows -->
-            <button onclick="location.reload()" style="margin-top: 40px; border-color: #f00; color: #f00;">CONNECTION_SEVERED</button>
+            <!-- Added style to force it to show -->
+            <button onclick="location.reload()" style="margin-top: 50px; position: relative; z-index: 20; pointer-events: auto; border: 2px solid #f00; color: #f00;">CONNECTION_SEVERED</button>
         </div>
     </div>
 
