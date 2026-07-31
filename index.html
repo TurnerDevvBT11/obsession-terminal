@@ -72,19 +72,12 @@
         const ctx = canvas.getContext('2d');
         let width, height, drops, matrixColor = '#0f0';
 
-        // 1 = where the letter parts are (DRAIN.EXE and DEVV stacked)
         const mask = [
             "11110011111001100011110000001110011111",
             "10001010000010001010000000100010001000",
             "11110011111001000011100000011100111000",
             "10001010000010001010000000100010001000",
-            "10001011111001100011110000001110011111",
-            "00000000000000000000000000000000000000",
-            "11100111100110010110010000000000000000",
-            "10001100000110010110010000000000000000",
-            "10001111000110010110010000000000000000",
-            "10001100000110010110010000000000000000",
-            "11100111100011000110010000000000000000"
+            "10001011111001100011110000001110011111"
         ];
 
         let lockedGrid = []; 
@@ -101,12 +94,10 @@
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, width, height);
 
-            // Draw locked chars
             ctx.fillStyle = matrixColor;
             ctx.font = '20px monospace';
-            // Center the whole block
             const startX = (width / 2) - (mask[0].length * 10);
-            const startY = (height / 2) - 150;
+            const startY = (height / 2) - 100;
 
             let allFilled = true;
             for (let r = 0; r < mask.length; r++) {
