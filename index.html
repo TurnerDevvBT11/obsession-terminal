@@ -9,10 +9,8 @@
         #matrix-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
         #content-wrapper { position: relative; z-index: 2; width: 100%; transition: 0.3s; }
 
-        /* Glitchy Cursor */
         body:hover { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="5" fill="red"/></svg>'), auto; }
 
-        /* Red Alert & Strobe */
         @keyframes strobe { 0% { border-color: #f00; } 50% { border-color: transparent; } 100% { border-color: #f00; } }
         body.red-alert { background: #220000 !important; color: #ff0000 !important; border: 10px solid #f00; animation: strobe 0.5s infinite; box-sizing: border-box; }
         body.red-alert input, body.red-alert button { border-color: #ff0000 !important; color: #ff0000 !important; }
@@ -27,6 +25,8 @@
         a { color: #0f0; display: block; margin: 20px; font-size: 24px; text-decoration: none; }
         
         #balance-display { font-size: 3em; margin: 20px 0; font-weight: bold; }
+        #progress-bar { width: 300px; height: 20px; border: 1px solid #0f0; margin: 10px auto; }
+        #progress-fill { height: 100%; background: #0f0; width: 0%; transition: 0.3s; }
         #terminal-log { position: fixed; bottom: 10px; left: 10px; text-align: left; font-size: 12px; opacity: 0.7; z-index: 5; max-width: 400px; }
         #terminal-log a { display: inline; color: #030; text-decoration: none; }
         #terminal-log a:hover { color: #0f0; }
@@ -47,6 +47,7 @@
                 <input type="text" id="user" placeholder="USERNAME" onkeypress="if(event.key === 'Enter') document.getElementById('pass').focus()">
                 <input type="password" id="pass" placeholder="PASSWORD" onkeypress="if(event.key === 'Enter') checkLogin()">
                 <button onclick="checkLogin()">LOGIN</button>
+                <div id="progress-bar"><div id="progress-fill"></div></div>
                 <p id="error-msg" style="color: red;"></p>
             </div>
         </div>
@@ -64,8 +65,8 @@
                 <a href="https://www.instagram.com/devv1763_?igsh=dnZpNDdndHJhMHN4" target="_blank">>>> INSTAGRAM</a>
                 <a href="https://on.soundcloud.com/ZRibs50bwGnRhCCDb5" target="_blank">>>> SOUNDCLOUD</a>
             </div>
-            <!-- Updated label to DRAIN_MORE -->
-            <button onclick="location.reload()" style="margin-top: 50px; position: relative; z-index: 20; pointer-events: auto; border: 2px solid #f00; color: #f00;">DRAIN_MORE</button>
+            <!-- The label is now correctly DRAIN_MORE -->
+            <button onclick="location.reload()" style="margin-top: 50px; position: relative; z-index: 20; border: 2px solid #f00; color: #f00;">DRAIN_MORE</button>
         </div>
     </div>
 
@@ -98,15 +99,21 @@
         function checkLogin() {
             var u = document.getElementById('user').value.toLowerCase();
             var p = document.getElementById('pass').value.toLowerCase();
-            if (u === "devv" && p === "obsession") {
+            const target = "obsession";
+            
+            if (u === "devv" && p === target) {
                 currentBalance = (Math.random() * (9000000 - 1000000) + 1000000);
                 document.getElementById('balance-display').innerText = "$" + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('main-screen').classList.remove('hidden');
-                log("AUTH SUCCESS. BALANCE FOUND.");
+                log("AUTH SUCCESS. ACCESS GRANTED.");
             } else {
+                let matches = 0;
+                for(let i = 0; i < p.length && i < target.length; i++) { if(p[i] === target[i]) matches++; }
+                let percent = (matches / target.length) * 100;
+                document.getElementById('progress-fill').style.width = percent + "%";
                 document.getElementById('error-msg').innerText = "ACCESS_DENIED";
-                log("INVALID CREDENTIALS.");
+                log("BRUTE FORCE: " + Math.round(percent) + "% MATCH");
             }
         }
 
