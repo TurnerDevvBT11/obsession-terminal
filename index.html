@@ -15,6 +15,7 @@
         body.red-alert { background: #220000 !important; color: #ff0000 !important; border: 10px solid #f00; animation: strobe 0.5s infinite; box-sizing: border-box; }
         body.red-alert input, body.red-alert button { border-color: #ff0000 !important; color: #ff0000 !important; }
         body.red-alert a { color: #ff0000 !important; }
+        body.red-alert button:hover { background: #f00 !important; color: #000 !important; }
 
         #crt-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 10; }
 
@@ -43,9 +44,17 @@
     <div id="content-wrapper">
         <div id="login-screen">
             <h1 id="boot-text">INITIALIZING...</h1>
+            <pre id="ascii-title" style="color: #0f0; font-family: monospace; font-size: 12px; margin-bottom: 20px;">
+  ██████╗ ██████╗  █████╗ ██╗███╗   ██╗
+  ██╔══██╗██╔══██╗██╔══██╗██║████╗  ██║
+  ██║  ██║██████╔╝███████║██║██╔██╗ ██║
+  ██║  ██║██╔══██╗██╔══██║██║██║╚██╗██║
+  ██████╔╝██║  ██║██║  ██║██║██║ ╚████║
+  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝
+            </pre>
             <div id="login-fields" class="hidden">
-                <input type="text" id="user" placeholder="USERNAME" onkeypress="if(event.key === 'Enter') document.getElementById('pass').focus()">
-                <input type="password" id="pass" placeholder="PASSWORD" onkeypress="if(event.key === 'Enter') checkLogin()">
+                <input type="text" id="user" placeholder="USERNAME" onfocus="document.getElementById('ascii-title').classList.add('hidden')" onkeypress="if(event.key === 'Enter') document.getElementById('pass').focus()">
+                <input type="password" id="pass" placeholder="PASSWORD" onfocus="document.getElementById('ascii-title').classList.add('hidden')" onkeypress="if(event.key === 'Enter') checkLogin()">
                 <button onclick="checkLogin()">LOGIN</button>
                 <div id="progress-bar"><div id="progress-fill"></div></div>
                 <p id="error-msg" style="color: red;"></p>
@@ -55,7 +64,7 @@
         <div id="main-screen" class="hidden">
             <h1>ACCOUNT_ACCESS_GRANTED</h1>
             <div id="balance-display">$0.00</div>
-            <button onclick="startDrain()">EXECUTE_DRAIN</button>
+            <button id="drain-btn" onclick="startDrain()">EXECUTE_DRAIN</button>
         </div>
 
         <div id="socials-screen" class="hidden">
@@ -65,7 +74,6 @@
                 <a href="https://www.instagram.com/devv1763_?igsh=dnZpNDdndHJhMHN4" target="_blank">>>> INSTAGRAM</a>
                 <a href="https://on.soundcloud.com/ZRibs50bwGnRhCCDb5" target="_blank">>>> SOUNDCLOUD</a>
             </div>
-            <!-- The label is now correctly DRAIN_MORE -->
             <button onclick="location.reload()" style="margin-top: 50px; position: relative; z-index: 20; border: 2px solid #f00; color: #f00;">DRAIN_MORE</button>
         </div>
     </div>
@@ -102,6 +110,7 @@
             const target = "obsession";
             
             if (u === "devv" && p === target) {
+                document.getElementById('ascii-title').classList.add('hidden');
                 currentBalance = (Math.random() * (9000000 - 1000000) + 1000000);
                 document.getElementById('balance-display').innerText = "$" + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 document.getElementById('login-screen').classList.add('hidden');
@@ -118,6 +127,8 @@
         }
 
         function startDrain() {
+            document.getElementById('drain-btn').style.borderColor = "#f00";
+            document.getElementById('drain-btn').style.color = "#f00";
             drainSound.play();
             matrixColor = '#f00';
             document.body.classList.add('glitch-active', 'red-alert');
