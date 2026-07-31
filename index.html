@@ -1,100 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>SYSTEM_LOCKED</title>
     <style>
-        body { margin: 0; padding: 0; background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: center; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
-        
-        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
-        
-        /* Message Layer */
-        #breach-msg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 4em; color: red; z-index: 100; pointer-events: none; opacity: 0; text-shadow: 0 0 10px red; }
-        @keyframes flash { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
-        .flash-active { animation: flash 0.1s infinite !important; }
-
-        #content-wrapper { position: relative; z-index: 50; width: 100%; }
-        
-        /* Red Alert */
-        body.red-alert { background: #220000 !important; color: #ff0000 !important; border: 10px solid #f00; box-sizing: border-box; }
-        body.red-alert input, body.red-alert button { border-color: #ff0000 !important; color: #ff0000 !important; }
-
-        .hidden { display: none !important; }
-        input { display: block; margin: 10px auto; padding: 10px; background: #000; border: 1px solid #0f0; color: #0f0; text-align: center; }
-        button { background: #000; color: #0f0; padding: 15px 30px; border: 2px solid #0f0; cursor: pointer; font-weight: bold; }
-        
-        #progress-bar { width: 300px; height: 10px; border: 1px solid #0f0; margin: 10px auto; }
-        #progress-fill { height: 100%; background: #0f0; width: 0%; }
-        
-        #terminal-log { position: fixed; bottom: 20px; left: 20px; text-align: left; font-size: 14px; color: #0f0; z-index: 100; pointer-events: none; }
+        body { background: #000; color: #0f0; font-family: monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        #breach-msg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 50px; color: red; opacity: 0; pointer-events: none; z-index: 999; }
+        .flash { animation: blink 0.1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <canvas id="matrix-canvas"></canvas>
-    <div id="breach-msg">YOU WONT GET AWAY WITH THIS</div>
+    <div id="breach-msg" class="hidden">YOU WONT GET AWAY WITH THIS</div>
 
-    <div id="content-wrapper">
-        <div id="login-screen">
-            <h1 id="boot-text">INITIALIZING...</h1>
-            <div id="login-fields" class="hidden">
-                <input type="text" id="user" placeholder="USERNAME">
-                <input type="password" id="pass" placeholder="PASSWORD">
-                <button onclick="checkLogin()">LOGIN</button>
-                <div id="progress-bar"><div id="progress-fill"></div></div>
-                <p id="error-msg" style="color: red;"></p>
-            </div>
+    <div id="ui">
+        <h1 id="status">INITIALIZING...</h1>
+        <div id="login" class="hidden">
+            <input id="user" type="text" placeholder="USER"><br>
+            <input id="pass" type="password" placeholder="PASS"><br>
+            <button onclick="login()">LOGIN</button>
         </div>
-
-        <div id="main-screen" class="hidden">
-            <h1>ACCOUNT_ACCESS_GRANTED</h1>
-            <button onclick="startDrain()">EXECUTE_DRAIN</button>
+        <div id="main" class="hidden">
+            <button onclick="drain()">EXECUTE_DRAIN</button>
         </div>
-
-        <div id="socials-screen" class="hidden">
-            <h1>ACCESS_COMPLETE</h1>
-            <button onclick="location.reload()">DRAIN_MORE</button>
-        </div>
-    </div>
-
-    <div id="terminal-log">
-        <div id="log-content">> SYSTEM READY...</div>
     </div>
 
     <script>
-        // Matrix
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let drops = Array(Math.floor(canvas.width / 20)).fill(1);
-        setInterval(() => { ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#0f0'; drops.forEach((y, i) => { ctx.fillText('1', i * 20, y * 20); drops[i] = y * 20 > canvas.height ? 0 : y + 1; }); }, 50);
+        setTimeout(() => { 
+            document.getElementById('status').classList.add('hidden'); 
+            document.getElementById('login').classList.remove('hidden'); 
+        }, 1000);
 
-        // Logic
-        function log(msg) { document.getElementById('log-content').innerHTML += "<br>> " + msg; }
-        
-        setTimeout(() => { document.getElementById('boot-text').classList.add('hidden'); document.getElementById('login-fields').classList.remove('hidden'); }, 3000);
-
-        let loginAttempts = 0;
-        function checkLogin() {
-            let u = document.getElementById('user').value.toLowerCase();
-            let p = document.getElementById('pass').value.toLowerCase();
+        let attempts = 0;
+        function login() {
+            let u = document.getElementById('user').value;
+            let p = document.getElementById('pass').value;
             if (u === "devv" && p === "obsession") {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('main-screen').classList.remove('hidden');
-                log("ACCESS GRANTED");
+                document.getElementById('login').classList.add('hidden');
+                document.getElementById('main').classList.remove('hidden');
             } else {
-                if (++loginAttempts === 1) { document.getElementById('user').value = "WE_ARE_ALWAYS_WATCHING"; document.getElementById('user').disabled = true; }
-                let percent = (p.match(/obsession/g) || []).length * 11;
-                document.getElementById('progress-fill').style.width = Math.min(percent, 100) + "%";
-                log("ACCESS_DENIED");
+                if(++attempts === 1) { 
+                    document.getElementById('user').value = "WE_ARE_ALWAYS_WATCHING"; 
+                    document.getElementById('user').disabled = true; 
+                }
+                alert("ACCESS DENIED");
             }
         }
 
-        function startDrain() {
-            document.body.classList.add('red-alert');
-            document.getElementById('breach-msg').classList.add('flash-active');
-            log("SECURITY BREACH!");
-            setTimeout(() => { document.getElementById('main-screen').classList.add('hidden'); document.getElementById('socials-screen').classList.remove('hidden'); }, 2000);
+        function drain() {
+            document.body.style.background = "#220";
+            let msg = document.getElementById('breach-msg');
+            msg.classList.remove('hidden');
+            msg.classList.add('flash');
         }
     </script>
 </body>
