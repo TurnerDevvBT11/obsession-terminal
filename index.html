@@ -1,57 +1,103 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <title>SYSTEM_LOCKED</title>
     <style>
-        body { background: #000; color: #0f0; font-family: monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        #breach-msg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 50px; color: red; opacity: 0; pointer-events: none; z-index: 999; }
-        .flash { animation: blink 0.1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
-        .hidden { display: none; }
+        body { margin: 0; padding: 0; background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: center; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: background 0.5s, color 0.5s; overflow: hidden; cursor: crosshair; }
+        
+        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
+        #content-wrapper { position: relative; z-index: 2; width: 100%; transition: 0.3s; }
+
+        /* Breach Message */
+        #breach-msg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 5em; color: red; z-index: 100; pointer-events: none; opacity: 0; text-shadow: 0 0 20px #f00; }
+        @keyframes flash { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+        .flash-active { animation: flash 0.1s infinite !important; }
+
+        /* CRT Overlay */
+        #crt-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 10; }
+
+        .hidden { display: none !important; }
+        input { display: block; margin: 10px auto; padding: 10px; background: #000; border: 1px solid #0f0; color: #0f0; text-align: center; }
+        button { background: #000; color: #0f0; padding: 15px 30px; font-size: 18px; border: 2px solid #0f0; cursor: pointer; font-weight: bold; }
+        button:hover { background: #0f0; color: #000; }
+        a { color: #0f0; display: block; margin: 20px; font-size: 24px; text-decoration: none; }
+        
+        #balance-display { font-size: 3em; margin: 20px 0; font-weight: bold; }
+        #progress-bar { width: 300px; height: 20px; border: 1px solid #0f0; margin: 10px auto; }
+        #progress-fill { height: 100%; background: #0f0; width: 0%; transition: 0.3s; }
+        #terminal-log { position: fixed; bottom: 10px; left: 10px; text-align: left; font-size: 12px; opacity: 0.7; z-index: 5; pointer-events: none; }
+        
+        body.red-alert { background: #220000 !important; color: #ff0000 !important; border: 10px solid #f00; box-sizing: border-box; }
+        body.red-alert input, body.red-alert button { border-color: #ff0000 !important; color: #ff0000 !important; }
+        body.red-alert a { color: #ff0000 !important; }
     </style>
 </head>
 <body>
 
-    <div id="breach-msg" class="hidden">YOU WONT GET AWAY WITH THIS</div>
+    <canvas id="matrix-canvas"></canvas>
+    <div id="crt-overlay"></div>
+    <div id="breach-msg">YOU WONT GET AWAY WITH THIS</div>
 
-    <div id="ui">
-        <h1 id="status">INITIALIZING...</h1>
-        <div id="login" class="hidden">
-            <input id="user" type="text" placeholder="USER"><br>
-            <input id="pass" type="password" placeholder="PASS"><br>
-            <button onclick="login()">LOGIN</button>
+    <div id="content-wrapper">
+        <div id="login-screen">
+            <h1 id="boot-text">INITIALIZING...</h1>
+            <div id="login-fields" class="hidden">
+                <input type="text" id="user" placeholder="USERNAME">
+                <input type="password" id="pass" placeholder="PASSWORD">
+                <button onclick="checkLogin()">LOGIN</button>
+                <div id="progress-bar"><div id="progress-fill"></div></div>
+                <p id="error-msg" style="color: red;"></p>
+            </div>
         </div>
-        <div id="main" class="hidden">
-            <button onclick="drain()">EXECUTE_DRAIN</button>
+
+        <div id="main-screen" class="hidden">
+            <h1>ACCOUNT_ACCESS_GRANTED</h1>
+            <div id="balance-display">$0.00</div>
+            <button onclick="startDrain()">EXECUTE_DRAIN</button>
+        </div>
+
+        <div id="socials-screen" class="hidden">
+            <h1>ACCESS_COMPLETE</h1>
+            <a href="https://www.tiktok.com/@devv1763?_r=1&_t=ZN-98TSYcxOdJm" target="_blank">>>> TIKTOK</a>
+            <a href="https://www.instagram.com/devv1763_?igsh=dnZpNDdndHJhMHN4" target="_blank">>>> INSTAGRAM</a>
+            <a href="https://on.soundcloud.com/ZRibs50bwGnRhCCDb5" target="_blank">>>> SOUNDCLOUD</a>
+            <button onclick="location.reload()" style="margin-top: 50px;">DRAIN_MORE</button>
         </div>
     </div>
 
-    <script>
-        setTimeout(() => { 
-            document.getElementById('status').classList.add('hidden'); 
-            document.getElementById('login').classList.remove('hidden'); 
-        }, 1000);
+    <div id="terminal-log"><div id="log-content">> SYSTEM READY...</div></div>
 
-        let attempts = 0;
-        function login() {
-            let u = document.getElementById('user').value;
-            let p = document.getElementById('pass').value;
-            if (u === "devv" && p === "obsession") {
-                document.getElementById('login').classList.add('hidden');
-                document.getElementById('main').classList.remove('hidden');
+    <script>
+        // Matrix
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let drops = Array(Math.floor(canvas.width / 20)).fill(1);
+        setInterval(() => { ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#0f0'; drops.forEach((y, i) => { ctx.fillText('1', i * 20, y * 20); drops[i] = y * 20 > canvas.height ? 0 : y + 1; }); }, 50);
+
+        function log(msg) { document.getElementById('log-content').innerHTML += "<br>> " + msg; }
+        setTimeout(() => { document.getElementById('boot-text').classList.add('hidden'); document.getElementById('login-fields').classList.remove('hidden'); }, 3000);
+
+        let loginAttempts = 0;
+        function checkLogin() {
+            let u = document.getElementById('user');
+            let p = document.getElementById('pass').value.toLowerCase();
+            if (u.value.toLowerCase() === "devv" && p === "obsession") {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-screen').classList.remove('hidden');
             } else {
-                if(++attempts === 1) { 
-                    document.getElementById('user').value = "WE_ARE_ALWAYS_WATCHING"; 
-                    document.getElementById('user').disabled = true; 
-                }
-                alert("ACCESS DENIED");
+                if (++loginAttempts === 1) { u.value = "WE_ARE_ALWAYS_WATCHING"; u.disabled = true; }
+                let percent = (p.length > 0) ? 11 : 0;
+                document.getElementById('progress-fill').style.width = percent + "%";
+                log("ACCESS_DENIED");
             }
         }
 
-        function drain() {
-            document.body.style.background = "#220";
-            let msg = document.getElementById('breach-msg');
-            msg.classList.remove('hidden');
-            msg.classList.add('flash');
+        function startDrain() {
+            document.body.classList.add('red-alert');
+            document.getElementById('breach-msg').classList.add('flash-active');
+            setTimeout(() => { document.getElementById('main-screen').classList.add('hidden'); document.getElementById('socials-screen').classList.remove('hidden'); }, 1500);
         }
     </script>
 </body>
